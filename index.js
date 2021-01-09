@@ -11,10 +11,10 @@
  */
 
 const Provider = require('./lib/provider');
-const inject = require('./lib/inject');
+const setup = require('./lib/setup');
 
 /** Provider. */
 exports.Provider = Provider;
 
-/** injectn. */
-exports.inject = inject;
+/** xboot setup. */
+exports.setup = setup;

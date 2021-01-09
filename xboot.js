@@ -6,10 +6,10 @@
  */
 'use strict';
 
-const { Provider, inject } = require('./index.js');
+const { Provider, setup } = require('./index.js');
 const { BootLoader } = require('xboot');
 
 const loader = new BootLoader('xprovide.js');
 const provider = new Provider();
 
-loader.forEach(_ => inject(provider, _));
+loader.forEach(_ => setup(provider, _));
