@@ -16,5 +16,5 @@ const inject = require('./lib/inject');
 /** Provider. */
 exports.Provider = Provider;
 
-/** inject. */
+/** injectn. */
 exports.inject = inject;
