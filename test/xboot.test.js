@@ -8,8 +8,8 @@
 
 describe('xboot', () => {
 
-  let Provider = jest.fn();
-  let Loader = jest.fn();
+  const Provider = jest.fn();
+  const Loader = jest.fn();
 
   beforeAll(() => {
     jest.doMock('../lib/provider', () => Provider, { virtual: true });
@@ -30,7 +30,7 @@ describe('xboot', () => {
 
   it('simple', () => {
     const provider = { test: 123 };
-    const modules = [jest.fn(), jest.fn()];
+    const modules = [ jest.fn(), jest.fn() ];
     Provider.mockImplementation(() => provider);
     Loader.mockImplementation(() => modules.map(_ => ({ content: _ })));
 
@@ -40,7 +40,7 @@ describe('xboot', () => {
     expect(Loader).toBeCalledWith('xprovide.js');
     expect(Provider).toBeCalledTimes(1);
     expect(Provider).toBeCalledWith();
-    for (let fn of modules) {
+    for (const fn of modules) {
       expect(fn).toBeCalledTimes(1);
       expect(fn).toBeCalledWith(provider);
     }
