@@ -8,7 +8,7 @@ export = setup;
  */
 /**
  * xboot模块安装功能函数
- * @param {Provider} provider 提供器
+ * @param {xprovide:Provider} provider 提供器
  * @param {Module} module 安装模块
  */
 declare function setup(provider: any, module: Module): void;

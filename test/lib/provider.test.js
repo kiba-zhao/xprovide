@@ -215,5 +215,9 @@ describe('lib/provider', () => {
   });
 
 
+  describe.skip('provide with not function', () => {
+
+  });
+
 });
 
