@@ -1,7 +1,7 @@
 export = Provider;
 /**
- * 模块
- * @typedef {Opts} 提供器可选项
+ * 提供器可选项
+ * @typedef {Object} Opts
  * @property {boolean} cache 是否缓存创建结果
  */
 /**
@@ -29,12 +29,47 @@ declare class Provider {
      * @param {any} factory 模型构建函数或模型本身
      * @param {Opts} opts 可选项
      */
-    define(id: string, deps: Array<string>, factory: any, opts?: any): void;
+    define(id: string, deps: Array<string>, factory: any, opts?: Opts): void;
 }
 declare namespace Provider {
-    export { 提供器可选项 };
+    export { DepRefer, InjectOpts, Opts };
 }
 /**
- * 模块
+ * 提供器可选项
  */
-type 提供器可选项 = any;
+type Opts = {
+    /**
+     * 是否缓存创建结果
+     */
+    cache: boolean;
+};
+/**
+ * 依赖对象描述
+ */
+type DepRefer = {
+    /**
+     * 是否必要
+     */
+    required: boolean;
+    /**
+     * 唯一标识
+     */
+    id: string;
+};
+/**
+ * 注入可选项
+ */
+type InjectOpts = {
+    /**
+     * 依赖描述对象
+     */
+    deps: Array<DepRefer>;
+    /**
+     * 构建依赖模块成功后执行函数
+     */
+    success: Function;
+    /**
+     * 构建依赖模块失败执行函数
+     */
+    fatal: Function;
+};

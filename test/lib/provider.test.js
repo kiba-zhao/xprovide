@@ -26,12 +26,15 @@ describe('lib/provider', () => {
         provider.define(id, [], factories[factories.length - 1]);
       }
 
-      provider.require(ids, (...args) => {
-        expect(args).toEqual(models);
-      });
-      provider.require(ids, (...args) => {
-        expect(args).toEqual(models);
-      });
+      const success = jest.fn();
+      provider.require(ids, success);
+      const success_next = jest.fn();
+      provider.require(ids, success_next);
+
+      expect(success).toBeCalledTimes(1);
+      expect(success).toBeCalledWith(...models);
+      expect(success_next).toBeCalledTimes(1);
+      expect(success_next).toBeCalledWith(...models);
       expect(factories[0]).toBeCalledTimes(1);
       expect(factories[0]).toBeCalledWith();
       expect(factories[1]).toBeCalledTimes(1);
@@ -47,9 +50,8 @@ describe('lib/provider', () => {
       const factories = [];
       const models = [];
 
-      provider.require(ids, (...args) => {
-        expect(args).toEqual(models);
-      });
+      const success = jest.fn();
+      provider.require(ids, success);
 
       for (const id of ids) {
         const model = Symbol(id);
@@ -57,6 +59,9 @@ describe('lib/provider', () => {
         factories.push(jest.fn(() => model));
         provider.define(id, [], factories[factories.length - 1]);
       }
+
+      expect(success).toBeCalledTimes(1);
+      expect(success).toBeCalledWith(...models);
       expect(factories[0]).toBeCalledTimes(1);
       expect(factories[0]).toBeCalledWith();
       expect(factories[1]).toBeCalledTimes(1);
@@ -100,9 +105,8 @@ describe('lib/provider', () => {
       const factories = [];
       const models = [];
 
-      provider.require(ids.slice(0, 1), m => {
-        expect(m).toEqual(models[0]);
-      });
+      const success = jest.fn();
+      provider.require(ids.slice(0, 1), success);
 
       for (let i = 0; i < ids.length; i++) {
         const id = ids[i];
@@ -112,6 +116,8 @@ describe('lib/provider', () => {
         provider.define(id, ids.slice(i + 1, i + 2), factories[i]);
       }
 
+      expect(success).toBeCalledTimes(1);
+      expect(success).toBeCalledWith(models[0]);
       expect(factories[0]).toBeCalledTimes(1);
       expect(factories[0]).toBeCalledWith(models[1]);
       expect(factories[1]).toBeCalledTimes(1);
@@ -135,9 +141,11 @@ describe('lib/provider', () => {
         provider.define(id, ids.slice(i + 1, i + 2), factories[i]);
       }
 
-      provider.require([ `${ids[0]}?`, 'opt1?' ], m => {
-        expect(m).toEqual(models[0]);
-      });
+      const success = jest.fn();
+      provider.require([ `${ids[0]}?`, 'opt1?' ], success);
+
+      expect(success).toBeCalledTimes(1);
+      expect(success).toBeCalledWith(models[0], undefined);
       expect(factories[0]).toBeCalledTimes(1);
       expect(factories[0]).toBeCalledWith(models[1]);
       expect(factories[1]).toBeCalledTimes(1);
@@ -215,7 +223,104 @@ describe('lib/provider', () => {
   });
 
 
-  describe.skip('provide with not function', () => {
+  describe('provide with not function', () => {
+
+    it('success', () => {
+
+      const provider = new Provider();
+      const ids = [ 'model1', 'model2', 'model3' ];
+      const models = [];
+
+      for (const id of ids) {
+        const model = Symbol(id);
+        models.push(model);
+        provider.define(id, [], model);
+      }
+
+      const success = jest.fn();
+      provider.require(ids, success);
+
+      expect(success).toBeCalledTimes(1);
+      expect(success).toBeCalledWith(...models);
+
+    });
+
+    it('success with require first', () => {
+
+      const provider = new Provider();
+      const ids = [ 'model1', 'model2', 'model3' ];
+      const models = [];
+
+      const success = jest.fn();
+      provider.require(ids, success);
+
+      for (const id of ids) {
+        const model = Symbol(id);
+        models.push(model);
+        provider.define(id, [], model);
+      }
+
+      expect(success).toBeCalledTimes(1);
+      expect(success).toBeCalledWith(...models);
+
+    });
+
+    it('success undefined', () => {
+
+      const provider = new Provider();
+      const ids = [ 'model1', 'model2', 'model3' ];
+      const models = [];
+
+      for (const id of ids) {
+        const model = Symbol(id);
+        models.push(model);
+        provider.define(id, [], model);
+      }
+
+      let success = jest.fn();
+      provider.require(ids, success);
+
+      expect(success).toBeCalledTimes(1);
+      expect(success).toBeCalledWith(...models);
+
+      const undefined_id = 'undefined';
+      provider.define(undefined_id, []);
+
+      success = jest.fn();
+      provider.require([ undefined_id ], success);
+
+      expect(success).toBeCalledTimes(1);
+      expect(success).toBeCalledWith(undefined);
+
+    });
+
+    it('success undefined with require first', () => {
+
+      const provider = new Provider();
+      const ids = [ 'model1', 'model2', 'model3' ];
+      const models = [];
+
+      let success = jest.fn();
+      provider.require(ids, success);
+
+      for (const id of ids) {
+        const model = Symbol(id);
+        models.push(model);
+        provider.define(id, [], model);
+      }
+
+      expect(success).toBeCalledTimes(1);
+      expect(success).toBeCalledWith(...models);
+
+      const undefined_id = 'undefined';
+      success = jest.fn();
+      provider.require([ undefined_id ], success);
+      provider.define(undefined_id, []);
+
+      expect(success).toBeCalledTimes(1);
+      expect(success).toBeCalledWith(undefined);
+
+    });
 
   });
 
