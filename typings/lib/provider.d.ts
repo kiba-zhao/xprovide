@@ -7,7 +7,6 @@ export = Provider;
 /**
  * 提供器
  * @class
- * @alias xprovide:Provider 提供器类
  * @param {Object} store 存储对象
  * @param {Opts} opts 可选项
  */
