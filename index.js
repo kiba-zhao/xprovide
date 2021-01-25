@@ -11,10 +11,8 @@
  */
 
 const Provider = require('./lib/provider');
-const setup = require('./lib/setup');
 
-/** Provider. */
+/**
+ * @type {Provider}
+ */
 exports.Provider = Provider;
-
-/** xboot setup. */
-exports.setup = setup;

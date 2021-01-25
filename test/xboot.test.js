@@ -9,40 +9,43 @@
 describe('xboot', () => {
 
   const Provider = jest.fn();
-  const Loader = jest.fn();
+  let xboot;
 
   beforeAll(() => {
     jest.doMock('../lib/provider', () => Provider, { virtual: true });
-    jest.doMock('xboot', () => ({ BootLoader: Loader }), { virtual: true });
+    xboot = require('@/xboot');
+    jest.resetModules();
   });
 
   afterEach(() => {
     Provider.mockReset();
-    Loader.mockReset();
-
-    jest.resetModules();
   });
 
   afterAll(() => {
     jest.dontMock('../lib/provider');
-    jest.dontMock('xboot');
+    xboot = undefined;
   });
 
   it('simple', () => {
-    const provider = { test: 123 };
-    const modules = [ jest.fn(), jest.fn() ];
+
+    const context = Symbol('context');
+    const boot = { createBootLoader: jest.fn(), setup: jest.fn() };
+    const provider = { define: jest.fn() };
     Provider.mockImplementation(() => provider);
-    Loader.mockImplementation(() => modules.map(_ => ({ content: _ })));
 
-    require('@/xboot');
+    const modules = [ Symbol('module1', 'module2', 'module3') ];
+    boot.createBootLoader.mockReturnValueOnce(modules);
+    xboot(boot, context);
 
-    expect(Loader).toBeCalledTimes(1);
-    expect(Loader).toBeCalledWith('xprovide.js');
     expect(Provider).toBeCalledTimes(1);
     expect(Provider).toBeCalledWith();
-    for (const fn of modules) {
-      expect(fn).toBeCalledTimes(1);
-      expect(fn).toBeCalledWith(provider);
+    expect(provider.define).toBeCalledTimes(1);
+    expect(provider.define).toBeCalledWith('boot', { ...boot, context });
+    expect(boot.createBootLoader).toBeCalledTimes(1);
+    expect(boot.createBootLoader).toBeCalledWith('xprovide.js', context);
+    expect(boot.setup).toBeCalledTimes(modules.length);
+    for (let i = 0; i < modules.length - 1; i++) {
+      expect(boot.setup.mock.calls[i]).toEqual([ modules[i], provider ]);
     }
   });
 
