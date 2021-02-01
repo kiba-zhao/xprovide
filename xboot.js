@@ -17,7 +17,7 @@ const { Provider } = require('./index.js');
 module.exports = (boot, context) => {
 
   const provider = new Provider();
-  provider.define('boot', { ...boot, context });
+  provider.define('boot', [], { ...boot, context });
 
   const loader = boot.createBootLoader('xprovide.js', context);
   loader.forEach(_ => boot.setup(_, provider));

@@ -40,7 +40,7 @@ describe('xboot', () => {
     expect(Provider).toBeCalledTimes(1);
     expect(Provider).toBeCalledWith();
     expect(provider.define).toBeCalledTimes(1);
-    expect(provider.define).toBeCalledWith('boot', { ...boot, context });
+    expect(provider.define).toBeCalledWith('boot', [], { ...boot, context });
     expect(boot.createBootLoader).toBeCalledTimes(1);
     expect(boot.createBootLoader).toBeCalledWith('xprovide.js', context);
     expect(boot.setup).toBeCalledTimes(modules.length);
