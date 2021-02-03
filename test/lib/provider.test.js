@@ -8,6 +8,9 @@
 
 const Provider = require('@/lib/provider');
 
+class ModelClass {
+}
+
 describe('lib/provider', () => {
 
   describe('simple', () => {
@@ -217,6 +220,61 @@ describe('lib/provider', () => {
       expect(factories[0]).not.toHaveBeenCalled();
       expect(factories[1]).not.toHaveBeenCalled();
       expect(factories[2]).not.toHaveBeenCalled();
+
+    });
+
+  });
+
+  describe('provide with class', () => {
+
+    it('success', () => {
+
+      const provider = new Provider();
+      const ids = [ 'model1', 'model2', 'model3' ];
+      const factories = [];
+
+      for (const id of ids) {
+        factories.push(ModelClass);
+        provider.define(id, [], factories[factories.length - 1]);
+      }
+
+      const success = jest.fn();
+      provider.require(ids, success);
+      const success_next = jest.fn();
+      provider.require(ids, success_next);
+
+      expect(success).toBeCalledTimes(1);
+      expect(success.mock.calls[0]).toHaveLength(3);
+      for (const model of success.mock.calls[0]) {
+        expect(model).toBeInstanceOf(ModelClass);
+      }
+      expect(success_next).toBeCalledTimes(1);
+      expect(success_next.mock.calls[0]).toHaveLength(3);
+      for (const model of success_next.mock.calls[0]) {
+        expect(model).toBeInstanceOf(ModelClass);
+      }
+    });
+
+    it('require with dep', () => {
+
+      const provider = new Provider();
+      const ids = [ 'model1', 'model2', 'model3' ];
+      const factories = [];
+      const success = jest.fn();
+
+      provider.require(ids.slice(0, 1), success);
+
+      for (let i = 0; i < ids.length; i++) {
+        const id = ids[i];
+        factories.push(ModelClass);
+        provider.define(id, ids.slice(i + 1), factories[i]);
+      }
+
+      expect(success).toBeCalledTimes(1);
+      expect(success.mock.calls[0]).toHaveLength(1);
+      for (const model of success.mock.calls[0]) {
+        expect(model).toBeInstanceOf(ModelClass);
+      }
 
     });
 
