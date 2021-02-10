@@ -30,7 +30,7 @@ describe('lib/provider', () => {
       }
 
       const success = jest.fn();
-      provider.require(ids, success);
+      provider.require(ids.map(_ => ({ id: _ })), success);
       const success_next = jest.fn();
       provider.require(ids, success_next);
 
@@ -116,7 +116,7 @@ describe('lib/provider', () => {
         const model = Symbol(id);
         models.push(model);
         factories.push(jest.fn(() => model));
-        provider.define(id, ids.slice(i + 1, i + 2), factories[i]);
+        provider.define(id, ids.slice(i + 1, i + 2).map(_ => ({ id: _ })), factories[i]);
       }
 
       expect(success).toBeCalledTimes(1);
@@ -145,7 +145,7 @@ describe('lib/provider', () => {
       }
 
       const success = jest.fn();
-      provider.require([ `${ids[0]}?`, 'opt1?' ], success);
+      provider.require([ `${ids[0]}?`, { id: 'opt1', required: false }], success);
 
       expect(success).toBeCalledTimes(1);
       expect(success).toBeCalledWith(models[0], undefined);
@@ -221,6 +221,33 @@ describe('lib/provider', () => {
       expect(factories[1]).not.toHaveBeenCalled();
       expect(factories[2]).not.toHaveBeenCalled();
 
+    });
+
+    it('wrong dep', () => {
+      const provider = new Provider();
+      const success = jest.fn();
+
+      expect(() => {
+        provider.require([ null ], success);
+      }).toThrow();
+
+      expect(() => {
+        provider.require([ undefined ], success);
+      }).toThrow();
+
+      expect(() => {
+        provider.require([ true ], success);
+      }).toThrow();
+
+      expect(() => {
+        provider.require([ Symbol() ], success);
+      }).toThrow();
+
+      expect(() => {
+        provider.require([ 123 ], success);
+      }).toThrow();
+
+      expect(success).not.toHaveBeenCalled();
     });
 
   });
