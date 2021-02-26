@@ -240,10 +240,6 @@ describe('lib/provider', () => {
       }).toThrow();
 
       expect(() => {
-        provider.require([ Symbol() ], success);
-      }).toThrow();
-
-      expect(() => {
         provider.require([ 123 ], success);
       }).toThrow();
 

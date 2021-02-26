@@ -3,7 +3,7 @@
   "recurseDepth": 10,
   "sourceType": "module",
   "source": {
-    "include": ["xboot.js","index.js","lib"],
+    "include": ["index.js","lib"],
     "includePattern": ".+\\.js$",
     "excludePattern": "(^|\\/|\\\\)_"
   },
